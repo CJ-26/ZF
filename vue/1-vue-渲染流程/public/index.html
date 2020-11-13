@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--  
+
+  总结： 1.对数据进行拦截 （对象，数组）
+         2. template模板 变成AST语法树，通过这个树 利用render函数生成虚拟dom
+         3、  每实例化的时候都会产生一个watcher() 我们叫这个watcher为渲染watcher ，watcher会调用 vm._updatae(vm._render)调用之后会把虚拟节点转化为真实节点
+         
+    -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../dist/vue.js"></script>
+<!--   
+{{}}:插值表达式的原理： 
+1. 需要一个模板变成一个 render 方法例如下面的伪代码:
+注释: render方法return出来一个执行函数,该函数有3个参数第一个参数是
+控制第二个参数(第二参数为函数)执行几次,而第二个参数为函数这个函数中
+又有三个参数 第一个参数为要创建的dom,第二参数为一个对象,第三个参数是{{}}里的变量也就就是
+data中的属性
+render(){
+  return _l(3,_c("li",{},naem))
+}
+
+2. 需要去vue实例上取值   需要有一个with方法去取值
+
+3. render方法产生的是虚拟dom , (虚拟dom就是一个对象) 虚拟dom的好处是可以描述dom结构
+    虚拟dom后面还有diff算法,用来比对那些属性变换了,那些属性没有变,变化的去更新,不变的
+    不用改, 虚拟dom还会在真实的dom之前做一个缓存, 如果一直操作真实的dom的没有底线的
+    性能会很差, 并且还有diff算法,更新之变换的数据
+ 
+    4. 生成一个真实的dom扔到页面,
+
+    上面的第一步模板转换成 render函数, 也就是把html语法转换为js语法该怎么办那?
+    模板的编译原理 :AST语法树
+    用一个语法树描述出html在把html转化为js,之后 包上上with生成render方法,调用render生成虚拟dom,之后在转换成真实的dom渲染在页面上
+   -->
+ 
+
+<div id="app" a=1 b=2>
+<ul>
+  <li style="color: red;">{{name}}</li>
+  <li style="background: pink;">{{age}}</li>
+</ul>
+</div>
+
+
+
+  <script>
+    //响应是数据变化 ，数据代理 实现的原理利用的是 Object.defineProperty
+    const vm = new Vue({
+      el:"#app",
+      data() {
+        return {
+       name:"zf",
+        age:10
+        }
+      },
+      methods:{
+
+      },
+      computed:{
+  
+      },
+      watch:{
+
+      }
+    })
+ 
+    /*
+    vue2是基于options Api的；
+
+    Object.freeze()冻结，不能使用 Object.defineProperty，数据不能被检测  
+    */
+  </script>
+</body>
+
+</html>
+

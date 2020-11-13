@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../dist/vue.js"></script>
+<div id="app" >
+ <my-button></my-button>
+</div>
+ <script>
+
+/*
+说说：Vue.component()？
+Vue.component()是调用的Vue中的Vue.extend()这个
+API,会返回通过对象创建的一个类，就可以通过这个类去创建一个组件
+去使用
+
+例如：Vue.component("my-buttom",{template:"<div></div>"})
+
+声名了一个组件叫my-button
+用的时候可以直接 :<my-button></my-button>可以复用；
+
+
+ 但同时还可在new Vue()中使用component定义组件例如：
+let vm = new Vue({el:"#app",component:{"my-button":{template:`<>内部按钮</>`}}})
+
+
+为了方便写注释这里我们称Vuecomponent("组件名"{template:"<div></div>"}),
+生命的组件叫外部组件，
+将 new Vue({el:"#app",componemts:{"组件的名字":{template:`<div></div>`}}})
+中的component生命的组件叫内部声明的；
+
+内部组件和外部组件的查找策略为： 先找自己身上是否存在（内部组件），每有在去找父亲的核心原理Object.create(),(利用__proto__链查找)
+*/
+
+Vue.component("my-button",{  //Vue.component的component没有s不要写成components
+  template:`<button style="color:red">外部按钮</button>`
+})
+
+ let vm = new Vue({
+   el:"#app",
+   components:{  //多了个s是components不是component
+     "my-button":{
+       template:`<button>内部按钮</button>`
+     }
+   }
+ })
+
+ /*
+ 组件渲染的流程：
+ 1.Vue.component = >调用 extend方法 生成子类构造函数；
+ 2.如果是组件添加hook()方法中在添加init方法；   组件的虚拟节点提添加属性componentOptions属性值为 生成的子类构造函数，Ctor
+ 3. 创建真实节点。会调用init()方法 ，new Ctor().mount() 内部会再给组件添加一个watcher
+ 会将渲染的节点放到当前的实例上，并且返回。
+ */
+ </script>
+</body>
+
+</html>

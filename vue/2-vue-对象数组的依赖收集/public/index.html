@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../dist/vue.js"></script>
+<div id="app" >
+ <li>{{arr}}</li>
+ <li>{{_list}}</li>
+ <li>{{list}}</li>
+</div>
+  <script>
+ /*
+ 依赖收集： 
+ 当有数据改变的时候，如果我暴力的直接去调用 vm._update(vm._rnder()) 虽然数据能跟新但同时也会重新在创建一遍dom样性能会很差；
+ */ 
+    const vm = new Vue({
+      el:"#app",
+      data() {
+        return {
+       arr:[{name:"小明"}],
+       list:[1,2,3,4],
+       _list: [[1,2,3,4],7,8,9,[89,90]]
+        }
+      },
+
+    })
+  
+    // setTimeout(()=>{
+    //   console.log(8)
+    //   vm.name = "hh";
+    //   vm.$nextTick(()=>{
+    //  console.log(vm.$options.el.innerHTML)
+    // })
+    // },2000)
+
+    // setTimeout(()=>{
+    //   console.log(12)
+    //   vm.arr[0].name = "小红"
+    // },3000)   //如果页面是这样写的<li>{{arr}}</li> 是会改变的。
+    
+  
+    setTimeout(()=>{
+      vm.list.push(6)
+      vm._list[0].push(5)
+    },2000)
+  </script>
+</body>
+
+</html>

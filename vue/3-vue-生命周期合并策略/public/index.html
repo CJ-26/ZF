@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../dist/vue.js"></script>
+<div id="app" >
+</div>
+  <script>
+    Vue.mixin({
+      name:2,
+      befoerCreate(){ //组件创建之前；
+         console.log("deforeCreate_1")     
+
+      },
+      created(){   //数据已被劫持
+        console.log("created_1")
+      },
+    })
+
+    Vue.mixin({
+      name:7,
+      befoerCreate(){ //组件创建之前；
+         console.log("deforeCreate_2")
+      },
+      created(){   //数据已被劫持
+        console.log("created_2")
+      },
+    })
+
+    let vm = new Vue({
+      el:"#app",
+      befoerCreate(){ //组件创建之前；
+         console.log("deforeCreate_3")
+      },
+      created(){   //数据已被劫持
+        console.log("created_3")
+      },
+    })
+
+
+    /*
+    源码中的$vnode代表的是组件的虚拟节点；
+    和_vnode代表的是组件里面元素的虚拟节点；
+    
+    */
+  </script>
+</body>
+
+</html>

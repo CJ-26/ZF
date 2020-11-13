@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="../dist/vue.js"></script>
+<div id="app" >
+ 
+</div>
+ <script>
+/*
+vue和react中的diff算法都是评级比对不会跨级比对；
+例如：
+第一组标签：             
+ <div>     
+    <p>
+     <a></a>
+    </p>
+  </div>
+
+  第二组标签：
+  <div> 
+    <ul>
+     <li></li>
+    </ul>
+  </div> 
+
+第一组用diff算法比对第二组时：
+同级比对就是  div 和 div
+             p   和  ul
+             a   和   li
+比对的;
+
+*/
+
+
+
+/*
+v-for的key为什不要用索引：
+diff算法双指针比对 例如 老的dom用v-for 循环出来 4个div key为索引， 我进行操作将div倒序之后第一个标签的key还是0，因为是索引吗，
+
+在比对的过程中 标签相同key相同，会去比孩子；因为是倒续了孩子肯定有不同的这要替换孩子；
+
+但如果key不同标签相同我根据key进行移动就可以了，移动的策略：老的头指针与新的尾指针进行对比
+如果头指针与尾指针相同，则老的头指针向后移动一位，新的尾指针向前移动一位（注意老的尾指针和新的头指针是不动的）
+将老的头指针移动之前的对应的元素放到老的尾指针对应的元素后面，之后的逻辑以此类推；
+
+
+
+
+*/
+
+ </script>
+</body>
+
+</html>
