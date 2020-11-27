@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="box">
+    uuuuuu
+  </div>
+</body>
+</html>
+<script>
+  let dox = document.getElementById("box")
+dox.onclick=function(){
+  ddd()
+}
+function ddd(){        
+        var src = 'http://122.19.125.29:80/userfiles/pubilc/static/7ff89341-lee3-4efb-bald-2c2ef86c991e.png';
+        var canvas = document.createElement('canvas');
+        var img = document.createElement('img');
+        img.onload = function(e) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var context = canvas.getContext('2d');
+            context.drawImage(img, 0, 0, img.width, img.height);         
+            canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+            canvas.toBlob((blob)=>{
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'aaa'; 
+                link.click();  
+            }, "image/jpeg");           
+        }
+        img.setAttribute("crossOrigin",'Anonymous');
+        img.src = src;
+    }
+ 
+
+</script>

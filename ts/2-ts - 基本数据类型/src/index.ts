@@ -230,3 +230,11 @@ num.toString()
 可以这样写： 111..toString()或者 (111).toString()  或者：111.0.toString() 
 
 */
+
+
+//总结：类型的使用是首字母大写还是小写例如（number和Number等）
+// 在标识类型时使用基本类型(例如number)
+let num_ :number
+num=12;
+//在标识实例类型的时候用首字母大写的（例如Number） 
+let num__:Number = new Number(15) 

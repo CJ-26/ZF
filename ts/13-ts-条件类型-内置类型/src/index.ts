@@ -186,3 +186,138 @@ type MyInstance = InstanceType<typeof Animal1> //MyInstance的类型为MyInstanc
 // 实现InstanceType：
 type _InstanceType<T extends new(...args:any[])=>any> = T extends  new(...args:any[])=>infer R ? R : never
 type _MyInstance = _InstanceType<typeof Animal1> //_MyInstance的类型为Animal1
+
+
+
+
+
+
+//--------------------------------------------------------
+//内置类型（转化类型）
+
+
+//将接口内规定的属性变为可选类型关键字为：Partial (用法 type 别名 = Partial<要转化成可选类型的接口>)                                                                                                                                                                                                                                
+interface Person{
+  name:string;
+  age:number;
+  address:string;
+  company:any
+}
+ type MyPerson = Partial<Person>
+ /*
+ MyPerson的类型变为：
+ {
+    name?: string | undefined;
+    age?: number | undefined;
+    address?: string | undefined;
+    company?: any;
+} 
+可选类型；
+ */
+let myperson:MyPerson = {
+  name:"小明",
+  //a:12  //报错   //MyPerson中的类型可有可无，但是MyPerson里面没有是不能添加的
+}  
+
+// 实现Partial：
+type _Partial<T> = {[K in keyof T]?:T[K]} // {[K in keyof T]?:T[K]}注释：[K in keyof T]循环出所有T中的属性，T[K]：在T中取出K表示的属性对应的类型，{[K in keyof T]?:T[K]}就是循环取出T所有的属性，一次给K并把T中对应K的类型赋给，当前的K(K也就是T中的属性)，并且将K 都见可选属性的标识？ ,{[K in keyof T]?:T[K]}因为外部还有{}所以把每个循环出来的 属性并且加了？的放到{}里面                                                                                
+interface Person1{
+  name:string;
+  age:number;
+  address:string;
+  company:any
+}
+ type MyPerson1 = _Partial<Person1>
+let myperson1:MyPerson1 = {
+  name:"小明",
+  
+}
+
+
+
+
+
+
+//要求接口内层套接口，内层接口也可选
+
+interface Company{
+  name:string,
+  age:number;
+  address:string,
+}
+
+interface Person2{
+  name:string,
+  age:number,
+  company:Company
+}
+type Deepartial<T> = {[K in keyof T]?:T[K] extends object ? Deepartial<T[K]>:T[K]}
+/*
+ {[K in keyof T]?:T[K] extends object ? Deepartial<T[K]>:T[K]}
+ [K in keyof T]?:T[K]   解释:将接口中属性设置成可选类型；
+T[K] extends object ? Deepartial<T[K]>:T[K]} 解释：判断T[K]是否为一个object如果是将该对象传入接口Deepartial<T[K]>继续递归调用接口不是就返回
+
+*/
+let  obj:Deepartial<Person2>={
+     company:{
+
+     } //可以为空因为上面设置了可选类型
+}
+
+// 有可选属性变为必填属性（-?表示必须填的属性）
+interface Company1{
+  name?:string,
+  age?:number;
+  address?:string,
+}
+type MyCompany1<T> = {[K in keyof T]-?:T[K]}  //
+type _MyCompany1 = MyCompany1<Company1>
+let MyCompany1:_MyCompany1 = {
+  name:"小明",
+  age:12,
+  address:"北京"
+}
+
+
+//变成禁读属性；(readonly仅读属性)
+interface Person4{
+name?:string;
+age:number;
+}
+type Required1<T> = {[K in keyof T]-?:T[K]}
+type Readonly1<T> = {readonly [K in keyof T]:T[K]} 
+type MyPerson2 = Readonly<Person4>  // MyPerson为仅读
+
+
+
+
+// 在一个接口中将某些属性挑出来 关键字：Pick （用法： Pick<接口，要挑出的属性>）
+interface Person5{
+  name:string;
+  age:number;
+  sxe:string
+  }
+
+  type PickPerson = Pick<Person5,"name"|"age">  //PickPerson的类型为   { name: string; age: number;}
+
+// 实现 Pick 
+type _Pick<T,K extends keyof T> ={[P in K]:T[P]}
+type __Pick = _Pick<Person5,'name'>
+
+
+//Record 记录类型  （用法：Record<key的类型，value的类型>）
+ let obj1:Record<string,any> = {
+   name:"小明",
+   age:12
+ } 
+
+ let obj2:Record<string,string>={
+   name:"小明",
+   //age:12 //报错 因为Record<string,string>第一个string表示对象的key的类型， 第二个string表示对象的value类型
+
+ }
+
+ let arr:Record<number,number> = [1,2,3,4]
+
+ //实现Record
+ type _Record<T extends keyof any,K> = { [P in T]: K; }

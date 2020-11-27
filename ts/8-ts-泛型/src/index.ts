@@ -173,7 +173,7 @@ let obj1 = {name:12}
 
 
 // 约束属性：
-// getVal函数规定有两个参数，参数一为一个对象，参数二为参数一中的属性。但但如果我在参数er中传了一个参数一中没有的属性要报错；
+// getVal函数规定有两个参数，参数一为一个对象，参数二为参数一中的属性。但如果我在参数二中传了一个参数但是参数一中没有的属性要报错；
 // <T extends Object,K extends keyof T> ,表示T 继承 Object类型，K 继承 T中的所有属性（keyof关键字表示取对象取中所有的key）
 const getVal = <T extends Object,K extends keyof T>(obj:T,val:K)=>{
 

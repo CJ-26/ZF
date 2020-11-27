@@ -48,7 +48,7 @@ const fullName1:IFullName1 = (firtName:string,lastName:string):string=>{
 fullName1("z","f")
 
 
-// 及有函数函数上还有属性  叫混合类型
+// 既有有函数，该函数上还有属性  叫混合类型
 //混合类型一般用于一个函数返回一个这个函数的属性像下面的计数器：
 interface ICount{
   ():number;

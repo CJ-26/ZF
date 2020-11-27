@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+
+</html>
+<script src="../dist/bundle.js"></script>
+<script>
+  let { reactive, effect } = VueReactivity;
+  let state = reactive({
+    name: "zf", 
+    age: 12,
+    address:{
+      a:1
+    },
+  })
+  effect(()=>{
+    state.name
+    effect(()=>{
+      state.age
+    })
+  })
+  // effect(() => {
+  //  app.innerHTML = state.name+"今年"+state.age+"岁"
+  // })
+</script>
+
+
+
+<!-- <script src="/node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
+<script>
+let {reactive,effect} = VueReactivity;
+let state = reactive({
+  name:"zf",
+  age:11
+})
+//effect尾副作用（副作用就是一上来就执行）
+effect(()=>{  
+  app.innerHTML = state.name+"今年"+state.age+"岁"
+})
+setTimeout(()=>{
+  state.name="xxx"
+},2000)
+
+
+
+/*
+
+ vue由一个一个模块组成的用哪个按哪个就可以了：@vue/reactivity 响应式模块
+ npm install @vue/reactivity -S  
+
+
+vue的响应式：会对数据进行劫持，vue2中的使用的是 Object.defineProperty而vue3使用的是proxy
+
+vue中当页面渲染时，会做依赖收集，vue2属性收集的是watcher，而vue3收集的是effect
+
+vue3的性能高主要是因为 proxy
+*/
+
+</script> -->
+
+
+
+
+

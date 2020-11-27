@@ -1,0 +1,19 @@
+import path from 'path'
+import ts from 'rollup-plugin-typescript2'
+import {nodeResolve} from '@rollup/plugin-node-resolve'
+export default{
+  input:'src/index.ts',
+  output:{
+    exports:'auto', // auto根据导出的模块自己猜导出的类型是什么样的；
+    format:'cjs',
+   file:path.resolve("dist/bundle.js") 
+  },
+  plugins:[
+    ts({
+      tsconfig:path.resolve('tsconfig.json')
+    }),
+    nodeResolve({
+      extensions:['.js','.ts']
+    })
+  ]
+}
