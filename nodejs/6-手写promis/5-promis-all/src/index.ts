@@ -11,7 +11,16 @@ const enum STATUS {
   fulfilled = "FULFILLED",
   rejected = "REJECTED",
 }
-
+//判断是不是promise
+function isPromise(x){
+  if((typeof x==='object' && x !== null) || typeof x === 'function'){ 
+    if(typeof x.then === "function"){
+         return true
+    }
+  }else{
+    return false
+  }
+}
 
 // 处理如果第一次then返回的是一个promise，核心逻辑解析x的类型来决定promise2返回成功还是失败
 function resolvePromise(promise2:Promise,x:any,resolve:resolveFn,reject:rejectFn):void{
@@ -83,13 +92,13 @@ class Promise {
     };
         try {  // 当   executor(resolve, reject);执行异常的时候走下面的catch （例如  executor方法种有  throw new Error()就会走catch）
           executor(resolve, reject); //  executor为new Promise传入的函数 (new Promise((resolve,reject)=>{}))
-          /*这里的executor就是new Promise((res,rej)=>{}) 的(res,rej)=>{},
+         /*这里的executor就是new Promise((res,rej)=>{}) 的(res,rej)=>{},
          用try...catch包裹是因为当出现new Promise((res,rej)=>{throw new Error('异常')})的时候捕获错误传给reject，
          但是try..catch是捕获不了异步错误的例如：
          new Promise((res,rej)=>{ setTimeout(()=>{throw new Error('异常')})})
           如果这中情况程序将终止报错，原因就是try..catch是捕获不了异步错误
-           */       
-	   } catch (e) {
+           */
+        } catch (e) {
           reject(e); // 如果抛出异常直接调用reject
         }
   }
@@ -168,6 +177,44 @@ class Promise {
     })
     return promise2
   }
+  catch(errfn){
+    return this.then(null,errfn)
+  }
+  static all(values){
+     return new Promise((resolve,reject)=>{
+       let arr = [];
+       let times = 0;
+       values.forEach((value,index) => {
+          if(isPromise(value)){
+            value.then((y)=>{
+              arr[index] = y
+              if(++times===values.length){  
+                //这里只能用计数器来判断如果 
+                //这样用返回的数组的长度来判断将会出错例如if(arr.length===values.length){} 
+                //因为返回的值要和传入的promise一一对应所以arr的赋值方式是以下标赋值的
+                //这也就和导致当我赋最后一个值的时候前面的不管赋没赋值此数组的长度都会与传入的的promise数组的长度相同；
+                //例如：出入的数组为[prmise1,prmise2,1,2] 前两项是promise后两项时普通值
+                //循环为异步并行也就是说先将1赋给arr的第2项在将2赋给arr的最后一项，这个时候arr的长度已经和values的长度相同了
+                //就返回了
+                //例如：
+                // let list = [] let list1 = [1,2,4], list[2] = 5 ,console.log(list.length===list1) 输出为true
+                resolve(arr)
+              }
+              
+            },reject)
+          }else{
+            arr[index] =value
+            console.log("普通")
+            if(arr.length===values.length){
+              resolve(arr)
+            }
+              // if(++times===values.length){
+              //   resolve(arr)
+              // }
+          }
+       });
+     })
+  }
 }
 
 /*单元测试Premise是否符合规范
@@ -192,6 +239,76 @@ Promise.deferred=function(){
   return dfd
 }
 export default Promise;
+
+
+
+/*
+promise链式调用then方法中的thie问题
+
+因为promise中有这样的逻辑(这里只拿成功举例子)： //因为thien返回promise在当链式then的时候，then中的逻辑是将所有的逻辑都包
+到了 let promise2 = new Promise((resolve,reject)=>{})的(resolve,reject)=>{。。。逻辑}里了
+很容易将(resolve,reject)=>{  this  } 的this就认为是 当前new的promins的this了，但是this吗谁调用就是
+谁，例如：
+let p1 = new Promise((res,rej)=>{res('成功')}) 
+let p2 = p1.then() 因为是p1掉的then所以此时的this为p1，p1.then()有返回了一个新的promis实例给了p2
+let p3 = p2.then  因为是p2调用then所以此时then中的this是p2
+
+let index = 0; //标识是判断是哪个App实例
+class App {
+  constructor(fn) {
+    index++;
+    console.log(index);
+    this.name = "小明";
+    this.age = index;
+    const c = (val) => {
+      this.name = val;
+    };
+    fn(c);
+  }
+  then(t, r) {
+    let app2 = new App((fn) => {
+      console.log(this);
+    });
+    return app2;
+  }
+}
+let p1 = new App((c)=>{c('小红')})
+let p2 = p1.then();
+let p3 = p2.then();
+输出的顺序：
+先打印 ：1  说明： new了一个 App 也就是p1
+在打印 2    说明： 又new了一个 App 也就是p2(调了then方法)
+在打印 App { name: '小红', age: 1 }    说明第一次调用then 打印this时age为1则this为p1的
+在打印 3     说明： 又new了一个 App 也就是p3(又调了then方法)
+最后打印 App { name: '小明', age: 2 }    说明 第二次调用then 打印this时 age为2 则this为p2的
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

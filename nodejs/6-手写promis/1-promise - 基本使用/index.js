@@ -1,3 +1,6 @@
+let fs= require("fs")
+
+
 // // promis可以解决多个异步多个并行执行，最终得到结果
 // //异步嵌套问题；
 
@@ -464,24 +467,116 @@
 
 
 // promise中then方法的穿透
-let promise22 = new Promise((resolve,reject)=>{ resolve("====成功====")})
-// promise A+ 中规定then的方法可传可不传，不穿的情况下会有then穿透
-promise22.then().then().then((res)=>{console.log(res)})  //====成功====
+// let promise22 = new Promise((resolve,reject)=>{ resolve("====成功====")})
+// // promise A+ 中规定then的方法可传可不传，不穿的情况下会有then穿透
+// promise22.then().then().then((res)=>{console.log(res)})  //====成功====
 
-//then传参的情况下的有return才能才能在下一个then中收到
-let promise23 = new Promise((resolve,reject)=>{resolve("====成功====")})
-promise23.then((res)=>{return res},(err)=>{return err}).then((res)=>{console.log("-----res---",res)},(err)=>{})   //-----res--- ====成功====
-
-
+// //then传参的情况下的有return才能才能在下一个then中收到
+// let promise23 = new Promise((resolve,reject)=>{resolve("====成功====")})
+// promise23.then((res)=>{return res},(err)=>{return err}).then((res)=>{console.log("-----res---",res)},(err)=>{})   //-----res--- ====成功====
 
 
 
 
 
 
+// 在promise异常后者失败的时候链式then时中间的then不传失败执行的函数(第二个参数)，在最后的then中
+//传失败的函数时，也会捕获到异常的（成功同理） 例如：
+// function error(){
+//     return new  Promise((res,rej)=>{
+//       throw new Error("dddd")
+//     })
+// }
+//  let err1 = error().then((res)=>{})
+//  let err2 = err1.then((res)=>{})
+//  let err3 = err2.then((res)=>{},(err)=>{console.log("1234567890",err)})  //1234567890 Error: dddd
 
 
 
+
+
+// catch的用法：
+// function read(flge){
+//   return new Promise((res,rej)=>{
+//     setTimeout(()=>{
+//       if(flge){
+//         res("==成功==")
+//       }else{
+//         rej("==出错了===")
+//       }
+//     })
+//   })
+// }
+
+// read(true).then(res=>read(false)).then().catch((err)=>{console.log("======>>>",err)}) //======>>> ==出错了===
+
+
+
+
+
+// 将node的APIB变为promise的API:
+//fs模块有一个属性promises 属性的值是把fs下的方法都变成了promise（fs模块为异步的）
+/*
+fs.promises.readFile('./age.txt', 'utf8').then((res)=>console.log(res))  //18
+ 
+//还可以这样调用：
+const { promises: { readFile } } = require('fs');  // 这种写法是取fs模块下的promises属性下的readFile相当于 let fs =require("fs") fs.promises.readFile()
+ readFile('./age.txt', 'utf8').then((res)=>console.log(res))
+*/
+
+
+
+//封装fs的promises属性，(面试会问如何将node的API转化为Promise的API)
+//fs.readFile有三个参数：url(要读的文件的路径) encoding(文件内用以及何种格式编码)  cb(回调函数)
+
+// function promisify(fn){
+//   return function(...arge){
+//     return new Promise((resolve,reject)=>{
+//         fn(...arge,function(err,data){
+//           if(err)reject(err);
+//           resolve(data)
+//         })
+//     })
+//   }
+//   }
+//   let read = promisify(fs.readFile)
+  
+//   read("./name.txt","utf8").then(res=>read(res,"utf8")).then((res)=>{console.log("res===res",res)}) //res===res 18
+
+
+
+
+
+ //promise的all方法当多个promise同时执行时就可以使用promise.all([prmise1,promise2,promise3]) 所有的promise都执行成功了在返回返回的值为一个数组存放着所有promise的成功值
+ //但如果有一个报错的就返回错误的信息，该信息就是报错的那个信息；
+ 
+
+function promisify1(fn){
+  return function(...arge){
+    return new Promise((resolve,reject)=>{
+        fn(...arge,function(err,data){
+          if(err)reject(err);
+          resolve(data)
+        })
+    })
+  }
+  }
+  let read1 = promisify1(fs.readFile)
+  Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8')]).then((res)=>{
+    console.log(res)  // 输出：[ './age.txt', '18' ]
+  }) 
+
+//promise的all方法中有 一个promise报错就报错返回
+//例如：我把name.txt的文件名改成name4.txt，fs找不到就会抛错
+//Promise.all([read1("./name4.txt","utf8"),read1('./age.txt','utf8')]).then((res)=>{}).catch((err)=>{console.log("catch==",err)})  //catch== { [Error: ENOENT....
+
+
+
+// 如果promise.all的数组中有普通值就会直接返回
+
+Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8'),1,2,3,]).then(res=>{
+  console.log(res)//[ './age.txt', '18', 1, 2, 3 ]
+})
 
 
 

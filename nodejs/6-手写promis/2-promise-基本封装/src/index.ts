@@ -34,7 +34,13 @@ class Promise {
     };
         try {  // 当   executor(resolve, reject);执行异常的时候走下面的catch （例如  executor方法种有  throw new Error()就会走catch）
           executor(resolve, reject); //  executor为new Promise传入的函数 (new Promise((resolve,reject)=>{}))
-        } catch (e) {
+          /*这里的executor就是new Promise((res,rej)=>{}) 的(res,rej)=>{},
+         用try...catch包裹是因为当出现new Promise((res,rej)=>{throw new Error('异常')})的时候捕获错误传给reject，
+         但是try..catch是捕获不了异步错误的例如：
+         new Promise((res,rej)=>{ setTimeout(()=>{throw new Error('异常')})})
+          如果这中情况程序将终止报错，原因就是try..catch是捕获不了异步错误
+           */
+		} catch (e) {
           reject(e); // 如果抛出异常直接调用reject
         }
   }
