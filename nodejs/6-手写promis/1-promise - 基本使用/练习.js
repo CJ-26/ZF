@@ -37,4 +37,9 @@ let p5 = p4.then((x)=>console.log(x)).catch((err)=>{console.log('err===',err)})
 //   }
 // }
 // fn(arr)
-
+class Item{
+  fn(){
+    console.log(1234458888888) //1234458888888
+  }
+}
+Item.prototype.fn()

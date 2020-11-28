@@ -1,4 +1,5 @@
 let fs= require("fs")
+const { resolve } = require("path")
 
 
 // // promis可以解决多个异步多个并行执行，最终得到结果
@@ -551,20 +552,20 @@ const { promises: { readFile } } = require('fs');  // 这种写法是取fs模块
  //但如果有一个报错的就返回错误的信息，该信息就是报错的那个信息；
  
 
-function promisify1(fn){
-  return function(...arge){
-    return new Promise((resolve,reject)=>{
-        fn(...arge,function(err,data){
-          if(err)reject(err);
-          resolve(data)
-        })
-    })
-  }
-  }
-  let read1 = promisify1(fs.readFile)
-  Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8')]).then((res)=>{
-    console.log(res)  // 输出：[ './age.txt', '18' ]
-  }) 
+// function promisify1(fn){
+//   return function(...arge){
+//     return new Promise((resolve,reject)=>{
+//         fn(...arge,function(err,data){
+//           if(err)reject(err);
+//           resolve(data)
+//         })
+//     })
+//   }
+//   }
+//   let read1 = promisify1(fs.readFile)
+//   Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8')]).then((res)=>{
+//     console.log(res)  // 输出：[ './age.txt', '18' ]
+//   }) 
 
 //promise的all方法中有 一个promise报错就报错返回
 //例如：我把name.txt的文件名改成name4.txt，fs找不到就会抛错
@@ -574,9 +575,131 @@ function promisify1(fn){
 
 // 如果promise.all的数组中有普通值就会直接返回
 
-Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8'),1,2,3,]).then(res=>{
-  console.log(res)//[ './age.txt', '18', 1, 2, 3 ]
+// Promise.all([read1("./name.txt","utf8"),read1('./age.txt','utf8'),1,2,3,]).then(res=>{
+//   console.log(res)//[ './age.txt', '18', 1, 2, 3 ]
+// })
+
+
+// Promise.resolve("11").then((res)=>{console.log(res)}) //11
+
+// Promise.reject('失败').then(null,(err)=>{console.log(err)}) // 失败
+ 
+
+
+
+//  finally ,不管是成功或者失败还是异常都会走finally，finally后面也能链式then，danfinally返回的结果不会影响后面的then的结果例如：
+
+// let promise34 = new Promise((resolve,reject)=>{
+//   resolve("成功")
+// }).then((res)=>{
+//   console.log(res)
+// }).finally(()=>{
+//   console.log("finally1")  //finally1
+// })
+
+// let promise35 = new Promise((resolve,reject)=>{
+//   reject("失败")
+// }).then(null,(err)=>{
+//   console.log(err)  //失败
+// }).finally(()=>{
+//   console.log("finally2")  //finally2
+// })
+
+// let promise36 = new Promise((resolce,reject)=>{
+//   throw new Error("异常")
+// }).then(null,(err)=>{
+//   console.log(err)  //Error: 异常
+// }).finally(()=>{
+//   console.log("finally3")  //finally3
+// })
+
+
+//finally的返回值不会影响后续的结果：例如：
+//Promise.resolve("444555").finally(()=>{ return 12}).then((res)=>{ console.log(res)})  //444555
+
+
+//成功的调用Promise.resolve("7777")后面的finally返回的promise中执行的也是resolve函数是不会不会采用这promise中resolve的值的，也是不会影响后续的逻辑，但是会等 new prmise执行完在往下走，
+// Promise.resolve("7777").finally(()=>{ 
+//   console.log("finally666s")  //finally666s
+//   return new Promise((res,rej)=>{
+//     setTimeout(()=>{
+//       res("ok") //不会采用ok这个结果
+//     }，1000)
+//   })
+//   }).then((res)=>{ console.log("finally111",res)})  //等一秒后输出： finally111 7777
+
+
+
+
+
+//失败的调用Promise.reject("7777")后面的finally返回的promise中执行的是resolve但resolve的结果也是不会影响后续的逻辑，但是会等 new prmise执行完在往下走，
+// Promise.reject("7777").finally(()=>{ 
+//   console.log("finally666s")  //finally666s
+//   return new Promise((res,rej)=>{
+//     setTimeout(()=>{
+//       res("ok")  
+//     },2000)
+//   })
+//   }).then(null,(res)=>{ console.log("finally111",res)})  //等2秒后在输出： finally111 7777
+
+
+
+//但是不管是Promise.reject()还是Promise.resolve()
+//只要后面链finally中返回的promise里面调用的是reject就会影响
+//后续的逻辑,会将失败的值传入后面的then的失败函数中
+// Promise.reject("7777").finally(()=>{ 
+//   return new Promise((resolve,reject)=>{
+//  console.log("finally666s")  //finally666s
+//     setTimeout(()=>{
+//       reject("不不不ok")  
+//     }，1000)
+//   })
+//   }).then((res)=>{ 
+//     console.log("finally111",res)
+//   },(err)=>{console.log("err--===",err)})  //等一秒输出： err--=== 不不不ok
+
+
+
+//但是不管是Promise.reject()还是Promise.resolve()
+//只要后面链finally中返回的promise里面调用的是reject就会影响
+//后续的逻辑,会将失败的值传入后面的then的失败函数中
+// Promise.resolve("7777").finally(()=>{ 
+//   return new Promise((resolve,reject)=>{
+ // console.log("finally666s")  //finally666s
+//     setTimeout(()=>{
+//       reject("不不不ok")  
+//     },1000)
+//   })
+//   }).then((res)=>{ 
+//     console.log("finally111",res)
+//   },(err)=>{console.log("err--err",err)})  //等一秒输出 err--err 不不不ok
+
+
+
+
+// Promise.race() 用法，一个promise数组，不管返回的是成功还是失败的那个先返回就用那个返回的结果,返回的是一个结果不是数组
+let p1 = new Promise((resolve,reject)=>{
+  setTimeout(()=>{
+    resolve("p1p1p1p1p1")
+  },2000)
 })
+let p2 = new Promise((resolve,reject)=>{
+  setTimeout(()=>{
+    reject("p2p2p2p2")
+  },1000)
+})
+
+ Promise.race([p1,p2]).then((res)=>{
+   console.log('resresres',res)  
+ },(err)=>{console.log("errerrerr",err)}) //errerrerr p2p2p2p2
+
+
+
+
+
+
+
+
 
 
 
