@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button id="button">点击1</button>
+  <button id="_button">点击2</button>
+
+</body>
+</html>
+<script>
+//事件是一个单独的事件线程，也是一个宏任务（点击事件的时候会将事件当到宏任务对列中）：
+  button.addEventListener('click',()=>{
+      console.log('listener1');
+      Promise.resolve().then(()=>console.log('micro task1'))
+  })
+  button.addEventListener('click',()=>{
+      console.log('listener2');
+      Promise.resolve().then(()=>console.log('micro task2'))
+  })
+  /*
+   当点击按钮输出的顺序：
+  输出顺序：
+  listener1
+  micro task1
+  listener2
+  micro task2
+
+
+  因为u事件是单独的线程页就是宏任务啦，
+  button绑定了两个click事件，这就会在点击button时候将两个事件按顺序放到宏任务对列中，
+  宏任务对列是执行不是清空而是按顺序一个一个的去执行，
+  也就数先执行第一个click，在第一个click中遇到微任务，将微任务放到微任务队列中，遇到宏任务将宏任务放到宏任务对列中，执行完同步的，去清空微任务，在渲染页面，之后只执行下一个宏任务，一次类退
+  */
+
+
+
+
+//-----------事件的特殊情况
+_button.addEventListener('click',()=>{
+      console.log('listener1');
+      Promise.resolve().then(()=>console.log('micro task1'))
+  })
+  _button.addEventListener('click',()=>{
+      console.log('listener2');
+      Promise.resolve().then(()=>console.log('micro task2'))
+  })
+_button.click()  // 这样写事件对用的函数会直接执行
+
+/*
+输出顺序：
+listener1
+listener2
+micro task1
+micro task2
+
+
+如果直接_button.click()，没有点击直接就执行，可以理解为执行click对应的函数,也就是有两个click函数直接调用，
+所以在两个click为同步的，执行第一个打印listener1，遇到promise放到微任务队列中执行第二个click打印listener2遇到promise方法微任务队列中
+同步执行完，去清空微任务，先打印micro task1 后打印micro ta
+
+sk2
+*/
+
+</script>

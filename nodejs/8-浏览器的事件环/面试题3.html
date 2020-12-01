@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+Promise.resolve().then(()=>{
+  console.log("Pormise")
+  setTimeout(()=>{
+    console.log("setTimeout")
+  },0)
+})
+setTimeout(()=>{
+  console.log("setTimeout1")
+  Promise.resolve().then(()=>{
+    console.log("Promise1")
+  },0)
+})
+/*
+输出顺序：
+Pormise
+setTimeout1
+Promise1
+setTimeout
+
+代码有上到下执行遇到第一个promise添加到微任务对列，继续走遇到setTimeout添加到宏任务队列中，之后清空微任务对列，输出Pormise
+发现有一个setTimeout加入宏任务对列，之后在执行宏任务对列中的第一个宏任务，输出setTimeout1，发现有一个微任务加入微任务队列，没有同步的了清空微任务队列输出Promise1
+之后再去宏任务对列中的下一个宏任务，输出setTimeout
+*/
+</script>

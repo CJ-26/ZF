@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+
+// messageChannel语言通道的使用：
+let channel = new  MessageChannel();
+channel.port1.postMessage('你有一条新的消息'); //发送消息    // 发消息 为：同步执行
+channel.port2.onmessage=function(e){  // 接受消息      //收消息为异步是一个宏任务
+  console.log(e.data) //打印：你有一条新的消息
+};
+</script>

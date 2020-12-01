@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  console.log(1);
+async function async () {
+    console.log(2);
+    await console.log(3);
+    console.log(4)
+}
+setTimeout(() => {
+	console.log(5);
+}, 0);
+const promise = new Promise((resolve, reject) => {
+    console.log(6);
+    resolve(7)
+})
+promise.then(res => {
+	console.log(res)
+})
+async (); 
+console.log(8);
+
+/*
+输出顺序;
+1  6  2  3 8 7  4  5
+输出过程：代码从上到下执行 ：
+先执行 console.log(1) 输出1
+继续走到函数  async 暂时没有被调用
+继续往下走到setTimeout 添加到宏任务对列 
+继续走new Promise立即执行 console.log(6);输出6，
+代码继续走 遇到promise.then将promise添加到微任务队列中
+代码继续走调用async ()发现此函有async。。await 会执行console.log(2);await console.log(3); 输出2   3  将await下面的添加到微任务队列中
+代码继续走执行 console.log(8);输出8，
+到这里同步都走完去按加微任务队列的顺序清空微任务对列： 第一个添加第一个执行
+所以走promise.then输出 7
+在走await下面的 输出4
+此时微任务清空去走宏任务队列。宏任务队列是不会清空的而是一个一个的按加入宏任务队列的顺序执行
+宏任务第一个执行setTimeout输出5，
+此时代码全部执行完
+
+
+async。。await执行说明：
+例如 
+async function async () {
+    console.log(2);
+    await console.log(3);
+    console.log(4)
+}
+async()
+在 await上买的为同步代码立即执行的
+在await 后面的并且是一行的相当于 new Promise((res,rej)=>{console.log("哈哈哈哈")}) 里的console.log("哈哈哈哈")
+也是同步的会立即执行
+await下面的也就是在await下一行的到最后的，现当有promise.then()里面成功后者失败函数里面的，是微任务，
+带同步代码执行完去清空微任务队列的时候在执行的；
+*/
+</script>

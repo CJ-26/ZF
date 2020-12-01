@@ -1,0 +1,16 @@
+{
+  "name": "ger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "1-generator的基本用法.js",
+  "dependencies": {
+    "co": "^4.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

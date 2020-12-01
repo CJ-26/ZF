@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  document.body.style.background = 'red';
+  console.log(1)
+  Promise.resolve().then(()=>{
+      console.log(2)
+      document.body.style.background = 'yellow';
+  })
+  console.log(3);
+/*
+先输出 1， 之后输出3 在之后输出2 之后渲染页面body背景色为黄色；
+页面渲染过程是不会由red到yellow会直接yellow，因为虽然先设置了red但是浏览器的渲染是在清空微任务之后在渲染的，
+清空promise后已经设置了成yellow了，所以直接渲染为yellow
+如果将promise换成setTimeout就会有从red变到yellow了，因为setTimeout为宏任务，因为渲染之后在走宏任务在渲染
+*/
+</script>

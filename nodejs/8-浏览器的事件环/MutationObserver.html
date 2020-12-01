@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <div>
+      <p id="p1"></p>
+      <p id="p2"></p>
+      <p id="p3"></p>
+    </div>
+  </div>
+  <button id='btn'>点击</button>
+</body>
+</html>
+
+
+<script>
+let p1 = getDom("p1")
+let p2 = getDom("p2")
+let p3 = getDom("p3")
+let btn = getDom("btn")
+let observer = new MutationObserver(function(mutations){
+  console.log(mutations)
+})
+
+let config = {attributes:true,childLise:true,characterData:true}
+ observer.observe(p1,config)
+
+
+ btn.onclick = function(){
+  p1.style.width="100px"
+  p1.style.height ='50px'
+  p1.style.background="red"
+}
+
+
+  function getDom(id){
+    return document.getElementById(id)
+  }
+
+</script>

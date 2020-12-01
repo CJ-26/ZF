@@ -678,26 +678,65 @@ const { promises: { readFile } } = require('fs');  // 这种写法是取fs模块
 
 
 // Promise.race() 用法，一个promise数组，不管返回的是成功还是失败的那个先返回就用那个返回的结果,返回的是一个结果不是数组
-let p1 = new Promise((resolve,reject)=>{
+// let p1 = new Promise((resolve,reject)=>{
+//   setTimeout(()=>{
+//     resolve("p1p1p1p1p1")
+//   },2000)
+// })
+// let p2 = new Promise((resolve,reject)=>{
+//   setTimeout(()=>{
+//     reject("p2p2p2p2")
+//   },1000)
+// })
+
+//  Promise.race([p1,p2]).then((res)=>{
+//    console.log('resresres',res)  
+//  },(err)=>{console.log("errerrerr",err)}) //errerrerr p2p2p2p2
+
+
+
+// promise的新怎的api.allSettled
+
+//Promise.allSettled([]) //不管成功还是失败都会都执行完返回一个对应的数组
+
+let p3 = new Promise((resolve,reject)=>{
   setTimeout(()=>{
     resolve("p1p1p1p1p1")
   },2000)
 })
-let p2 = new Promise((resolve,reject)=>{
+let p4 = new Promise((resolve,reject)=>{
   setTimeout(()=>{
     reject("p2p2p2p2")
   },1000)
 })
-
- Promise.race([p1,p2]).then((res)=>{
-   console.log('resresres',res)  
- },(err)=>{console.log("errerrerr",err)}) //errerrerr p2p2p2p2
-
+let p5 = new Promise((resolve,reject)=>{
+    throw new Error('ddd')
+})
 
 
+Promise.allSettled([p3,p4,p5]).then((res)=>{
+  console.log("res====",res)
+},(err)=>{console.log('err',err)}) 
+/*输出为
+res==== [
+  { status: 'fulfilled', value: 'p1p1p1p1p1' },
+  { status: 'rejected', reason: 'p2p2p2p2' },
+  {
+    status: 'rejected',
+    reason: Error: ddd
+        at d:\练习代码\珠峰\nodejs\6-手写promis\1-promise - 基本使用\index.js:713:11
+        at new Promise (<anonymous>)
+        at Object.<anonymous> (d:\练习代码\珠峰\nodejs\6-手写promis\1-promise - 基本使用\index.js:712:10)
+        at Module._compile (internal/modules/cjs/loader.js:1063:30)
+        at Object.Module._extensions..js (internal/modules/cjs/loader.js:1092:10)
+        at Module.load (internal/modules/cjs/loader.js:928:32)
+        at Function.Module._load (internal/modules/cjs/loader.js:769:14)
+        at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)
+        at internal/main/run_main_module.js:17:47
+  }
+]
 
-
-
+*/
 
 
 
