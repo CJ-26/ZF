@@ -1,0 +1,14 @@
+{
+  "name": "let-ha-x",
+  "version": "1.0.0",
+  "description": "第一个包",
+  "main": "index.js",
+  "bin": {
+    "ha": "./bin/www"
+  },
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "th",
+  "license": "MIT",
+}

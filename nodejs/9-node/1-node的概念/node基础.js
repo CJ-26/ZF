@@ -146,3 +146,31 @@ function fn (){
   })()
 }
 fn.call({})
+
+
+
+
+
+
+
+
+
+// 在node中全局上可以直接访问的属性叫全局变量；
+//但是node中也说有些变量虽然看似全局的，但实际上不是。 它们仅存在于模块的作用域中
+//__dirname、__filename、exports、module、require()这些就是存在于模块的作用域中的也就是说可以直接访问，不能global.名字 访问例如：
+                    //        console.log(global.__dirname)   //输出为 undefined
+                    //         console.log(__dirname) //输出为：d:\练习代码\珠峰\nodejs\9-node\node
+/*
+console.log(global.__dirname)和 console.log(__dirname) 的输出结果证明了global上是没有__dirname属性的
+同理 __filename、exports、module、require()这些也不是global上的属性，
+但是__dirname  __filenmae exports  module  require可以直接访问因为他们是存在于模块的作用域中的。这和node模块机制有关；
+
+*/
+
+
+
+
+
+
+
+
